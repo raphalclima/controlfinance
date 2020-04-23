@@ -6,7 +6,7 @@ interface Props {
 
 export const Container = styled.div`
   position: relative;
-  margin-bottom: 10px
+  margin-bottom: 10px;
 `;
 
 export const Span = styled.span`

@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { Redirect, useParams } from 'react-router';
+import React, { useRef, useState, useEffect } from 'react';
+import { Redirect, useParams } from 'react-router-dom';
 import { SubmitHandler, FormHandles } from '@unform/core';
 
 import {
@@ -25,12 +25,20 @@ interface RouteParams {
 const ResetPassword : React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const params = useParams<RouteParams>();
-
   const [logged, setLogged] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 1000);
+
+  useEffect(() => {
+    window.addEventListener('resize', () => setIsMobile(window.innerWidth <= 1000));
+    return () => window.removeEventListener('resize', () => setIsMobile(window.innerWidth <= 1000));
+  }, []);
 
   const handleSubimit : SubmitHandler<FormData> = async (data) => {
-    if (!data.password && !data.confirmPassword) { formRef.current?.setFieldError('confirmPassword', 'Favor informar nova senha!'); }
-    if (data.password !== data.confirmPassword) { formRef.current?.setFieldError('confirmPassword', 'As senhas não são iguais!'); }
+    if (!data.password && !data.confirmPassword) {
+      formRef.current?.setFieldError('confirmPassword', 'Favor informar nova senha!'); // eslint-disable-line
+    } if (data.password !== data.confirmPassword) {
+      formRef.current?.setFieldError('confirmPassword', 'As senhas não são iguais!'); // eslint-disable-line
+    }
 
     const newData = { password: data.password, passwordResetToken: params.token };
 
@@ -56,34 +64,36 @@ const ResetPassword : React.FC = () => {
   };
 
   return (
-    <Container>
-      { logged && <Redirect to="/" />}
-      <BackGroundForgot />
-      <MainBlock>
-        <Panel>
-          <Content>
-            <Title>Criar Nova Senha</Title>
-            <Form ref={formRef} onSubmit={handleSubimit}>
-              <Input
-                type="password"
-                name="password"
-                placeholder="Nova Senha"
-                icon={Lock}
-              />
-              <Input
-                type="password"
-                name="confirmPassword"
-                placeholder="Confirmar Senha"
-                icon={Lock}
-              />
-              <Button type="submit" text="Confirmar" />
-            </Form>
-          </Content>
-        </Panel>
-        <Footer />
-      </MainBlock>
-      <BackGroundComplement />
-    </Container>
+    <>
+      { logged && <Redirect to="/app/dashboard" />}
+      <Container>
+        { !isMobile && <BackGroundForgot /> }
+        <MainBlock>
+          <Panel>
+            <Content>
+              <Title>Criar Nova Senha</Title>
+              <Form ref={formRef} onSubmit={handleSubimit}>
+                <Input
+                  type="password"
+                  name="password"
+                  placeholder="Nova Senha"
+                  icon={Lock}
+                />
+                <Input
+                  type="password"
+                  name="confirmPassword"
+                  placeholder="Confirmar Senha"
+                  icon={Lock}
+                />
+                <Button type="submit" text="Confirmar" />
+              </Form>
+            </Content>
+          </Panel>
+          <Footer />
+        </MainBlock>
+        { !isMobile && <BackGroundComplement /> }
+      </Container>
+    </>
   );
 };
 

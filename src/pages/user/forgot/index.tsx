@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { Redirect } from 'react-router';
+import React, { useRef, useState, useEffect } from 'react';
+import { Redirect } from 'react-router-dom';
 import { SubmitHandler, FormHandles } from '@unform/core';
 
 import Api from '../../../services/api';
@@ -18,6 +18,12 @@ interface FormData {
 const Login : React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const [redirect, setRedirect] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 1000);
+
+  useEffect(() => {
+    window.addEventListener('resize', () => setIsMobile(window.innerWidth <= 1000));
+    return () => window.removeEventListener('resize', () => setIsMobile(window.innerWidth <= 1000));
+  }, []);
 
   const handleSubimit : SubmitHandler<FormData> = async (data) => {
     await Api.post('/users/forgot_password', data).then(
@@ -29,7 +35,7 @@ const Login : React.FC = () => {
       (err) => {
         if (err.response) {
           const { field, error } = err.response.data;
-          formRef.current?.setFieldError(field, error);
+          formRef.current?.setFieldError(field, error); // eslint-disable-line
         } if (err.request) {
           console.log(`Error request: ${err.request}`);
         } else {
@@ -40,28 +46,30 @@ const Login : React.FC = () => {
   };
 
   return (
-    <Container>
+    <>
       { redirect && <Redirect to="/login" /> }
-      <BackGroundForgot />
-      <MainBlock>
-        <Panel>
-          <Content>
-            <Title>Recuperar Senha</Title>
-            <Form ref={formRef} onSubmit={handleSubimit}>
-              <Input
-                type="Email"
-                name="email"
-                placeholder="E-mail"
-                icon={Email}
-              />
-              <Button type="submit" text="Enviar" />
-            </Form>
-          </Content>
-        </Panel>
-        <Footer />
-      </MainBlock>
-      <BackGroundComplement />
-    </Container>
+      <Container>
+        { !isMobile && <BackGroundForgot /> }
+        <MainBlock>
+          <Panel>
+            <Content>
+              <Title>Recuperar Senha</Title>
+              <Form ref={formRef} onSubmit={handleSubimit}>
+                <Input
+                  type="Email"
+                  name="email"
+                  placeholder="E-mail"
+                  icon={Email}
+                />
+                <Button type="submit" text="Enviar" />
+              </Form>
+            </Content>
+          </Panel>
+          <Footer />
+        </MainBlock>
+        { !isMobile && <BackGroundComplement /> }
+      </Container>
+    </>
   );
 };
 

@@ -1,29 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Redirect } from 'react-router-dom';
 
-import SideBar from '../../../components/menu/sidebar';
 import Header from '../../../components/header';
 
-import {
-  Container, Content, MainBlock,
-} from './styles';
+const Main: React.FC = () => {
+  const [menuActive, setMenuActive] = useState<boolean>(false);
+  const user = localStorage.getItem('@finance-map/user');
+  const logged = !!user;
 
-const user = localStorage.getItem('@finance-map/user');
-const logged = !!user;
+  return (
+    <>
+      { !logged && <Redirect to="/login" /> }
+      <Header handlerMenu={() => setMenuActive(!menuActive)} />
+    </>
+  );
+};
 
-const App: React.FC = () => (
-  <div className="App">
-    { logged ? <Redirect to="/" /> : <Redirect to="/login" /> }
-    <Container>
-      <SideBar />
-      <MainBlock>
-        <Header title="Home" />
-        <Content flexGrow={1}>
-          <span> Content </span>
-        </Content>
-      </MainBlock>
-    </Container>
-  </div>
-);
-
-export default App;
+export default Main;

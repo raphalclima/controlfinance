@@ -1,12 +1,12 @@
-import React, { useRef, useState } from 'react';
-import { Redirect } from 'react-router';
+import React, { useRef, useState, useEffect } from 'react';
+import { Redirect } from 'react-router-dom';
 import { SubmitHandler, FormHandles } from '@unform/core';
 
+import Api from '../../../services/api';
 import {
   Container, MainBlock, Panel, Content, Title, Form,
 } from './styles';
 
-import Api from '../../../services/api';
 import { Input, Button } from '../../../components/form';
 import Footer from '../../../components/footer';
 import {
@@ -28,6 +28,12 @@ interface ErrorApi {
 const Signup : React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const [logged, setLogged] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 1000);
+
+  useEffect(() => {
+    window.addEventListener('resize', () => setIsMobile(window.innerWidth <= 1000));
+    return () => window.removeEventListener('resize', () => setIsMobile(window.innerWidth <= 1000));
+  }, []);
 
   const handleSubimit : SubmitHandler<FormData> = async (data) => {
     await Api.post('/users', data).then(
@@ -52,46 +58,48 @@ const Signup : React.FC = () => {
   };
 
   return (
-    <Container>
-      { logged && <Redirect to="/" />}
-      <BackGroundSignup />
-      <MainBlock>
-        <Panel>
-          <Content>
-            <Title>Cadastro de Usuário</Title>
-            <Form ref={formRef} onSubmit={handleSubimit}>
-              <Input
-                type="text"
-                name="nickname"
-                placeholder="Apelido"
-                icon={CardIdentity}
-              />
-              <Input
-                type="email"
-                name="email"
-                placeholder="E-mail"
-                icon={Email}
-              />
-              <Input
-                type="text"
-                name="username"
-                placeholder="Username"
-                icon={User}
-              />
-              <Input
-                type="password"
-                name="password"
-                placeholder="Password"
-                icon={Lock}
-              />
-              <Button type="submit" text="Cadastrar" />
-            </Form>
-          </Content>
-        </Panel>
-        <Footer />
-      </MainBlock>
-      <BackGroundComplement />
-    </Container>
+    <>
+      { logged && <Redirect to="/app/dashboard" />}
+      <Container>
+        { !isMobile && <BackGroundSignup /> }
+        <MainBlock>
+          <Panel>
+            <Content>
+              <Title>Cadastro de Usuário</Title>
+              <Form ref={formRef} onSubmit={handleSubimit}>
+                <Input
+                  type="text"
+                  name="nickname"
+                  placeholder="Apelido"
+                  icon={CardIdentity}
+                />
+                <Input
+                  type="email"
+                  name="email"
+                  placeholder="E-mail"
+                  icon={Email}
+                />
+                <Input
+                  type="text"
+                  name="username"
+                  placeholder="Username"
+                  icon={User}
+                />
+                <Input
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  icon={Lock}
+                />
+                <Button type="submit" text="Cadastrar" />
+              </Form>
+            </Content>
+          </Panel>
+          <Footer />
+        </MainBlock>
+        { !isMobile && <BackGroundComplement /> }
+      </Container>
+    </>
   );
 };
 

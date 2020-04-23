@@ -1,24 +1,39 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
-  Container, Icons, Title, Avatar, Separator,
+  Container, Menu, Icons, Avatar, Separator,
 } from './styles';
 
-import { BellNews } from '../../assets';
+import { BellNews, Burger } from '../../assets';
+import SideBar from '../menu/sidebar';
 
 interface Props {
-  title: string;
+  handlerMenu(): void;
 }
 
-const Footer : React.FC<Props> = (props) => (
-  <Container>
-    <Title>{ props?.title }</Title>
-    <Icons>
-      <BellNews />
-      <Separator />
-      <Avatar src="https://www.samservicos.com.br/wp-content/uploads/2019/02/user-sam.png" />
-    </Icons>
-  </Container>
-);
+const Header : React.FC<Props> = (props) => {
+  const [toggleMenu, setToggleMenu] = useState<boolean>(false);
 
-export default Footer;
+  const handleClick = () => {
+    setToggleMenu(!toggleMenu);
+    setHandlerMenu();
+  };
+
+  const setHandlerMenu = () => props?.handlerMenu();
+
+  return (
+    <Container>
+      <Menu>
+        <Burger handleClick={() => handleClick()} />
+        <SideBar activeMenu={toggleMenu} handleVisible={() => handleClick()} />
+      </Menu>
+      <Icons>
+        <BellNews />
+        <Separator />
+        <Avatar src="https://www.samservicos.com.br/wp-content/uploads/2019/02/user-sam.png" />
+      </Icons>
+    </Container>
+  );
+};
+
+export default Header;

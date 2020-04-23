@@ -1,4 +1,5 @@
 import React from 'react';
+import { Redirect } from 'react-router-dom';
 
 import { Container, ActiveBar } from './styles';
 
@@ -6,7 +7,7 @@ interface Props {
     title: string;
     Icon(): JSX.Element;
     active: boolean;
-    expandMenu: boolean;
+    route: string
     handlerClick(): void;
 }
 
@@ -16,14 +17,12 @@ const MenuItem : React.FC<Props> = (props) => {
   return (
     <Container
       active={props?.active}
-      expandMenu={props?.expandMenu}
       onClick={() => props?.handlerClick()}
     >
-      { props?.active && <ActiveBar /> }
+      { props?.active && <ActiveBar />}
+      { props?.active && <Redirect to={props?.route} />}
       <div><Icon /></div>
-      { props?.expandMenu && (
       <span>{ props?.title }</span>
-      )}
     </Container>
   );
 };

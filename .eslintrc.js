@@ -40,8 +40,10 @@ module.exports = {
       }
     ],
     'import/prefer-default-export': 'off',
+    "no-unused-expressions": "off",
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/explicit-member-accessibility': 'off',
+    "@typescript-eslint/no-unused-expressions": ["error"],
     'spaced-comment': ['error', 'always', {
         'line': {
           'markers': ['/'],

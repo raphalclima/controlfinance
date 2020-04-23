@@ -2,17 +2,16 @@ import styled from 'styled-components';
 
 interface Props {
   active: boolean;
-  expandMenu: boolean;
 }
 
 export const Container = styled.div<Props>`
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  height: 60px;
+  height: 50px;
   cursor: pointer;
-  justify-content: ${(props) => (props.expandMenu ? 'left' : 'center')};
-  padding-left: ${(props) => (props.expandMenu ? '25px' : '0px')};
+  justify-content: left;
+  padding-left: 25px;
   transition-property: padding;
   transition-duration: 0.5s;
 
@@ -23,16 +22,16 @@ export const Container = styled.div<Props>`
 
   span{
     font-family: Muli;
-    font-size: 16px;
+    font-size: 20px;
     line-height: 20px;
-    letter-spacing: 0.2px;
-    color: #A4A6B3;
+    letter-spacing: 0.3px;
+    color: #FFF;
     margin-left: 20px;
   }
 `;
 
 export const ActiveBar = styled.div`
-  height: 56px;
+  height: 50px;
   width: 3px;
   background-color: #89229B;
   position: absolute;

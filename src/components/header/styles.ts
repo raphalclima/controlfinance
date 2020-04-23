@@ -13,10 +13,16 @@ export const Container = styled.div`
   display: flex;
   flex-direction: row;
   height: 50px;
-  background-color: #353535;
+  background-color: #2c2c2c;
   justify-content: space-between;
   align-items: center;
   padding: 0px 20px 0px;
+`;
+
+export const Menu = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 `;
 
 export const Icons = styled.div`
@@ -31,14 +37,4 @@ export const Separator = styled.div`
   margin-left: 13px;
   height: 32px;
   width: 2px;
-`;
-
-export const Title = styled.span`
-  font-family: Muli;
-  font-style: normal;
-  font-weight: bold;
-  font-size: 24px;
-  line-height: '30px';
-  letter-spacing: 0.3px;
-  color: #FFF;
 `;

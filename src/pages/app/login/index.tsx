@@ -1,7 +1,10 @@
-import React, { useRef, useState } from 'react';
-import { Redirect } from 'react-router';
+import React, { useRef, useState, useEffect } from 'react';
+import { Redirect } from 'react-router-dom';
 import { SubmitHandler, FormHandles } from '@unform/core';
+import { useSelector, useDispatch } from 'react-redux';
 
+import { AplicationState } from '../../../store';
+import * as UserActions from '../../../store/ducks/User/types';
 import Api from '../../../services/api';
 import { Input, Button } from '../../../components/form';
 import Footer from '../../../components/footer';
@@ -23,6 +26,18 @@ interface FormData {
 const Login : React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const [redirect, setRedirect] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 1000);
+  const teste = useSelector((state: AplicationState) => state.user.data);
+  console.log('resultado do selector:');
+  console.log(teste);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    console.log('chamadno dispatch');
+    dispatch({ type: UserActions.UserTypes.LOAD_REQUEST, username: 'testeas', password: 'teste' });
+    window.addEventListener('resize', () => setIsMobile(window.innerWidth <= 1000));
+    return () => window.removeEventListener('resize', () => setIsMobile(window.innerWidth <= 1000));
+  }, [dispatch]);
 
   const handleSubimit : SubmitHandler<FormData> = async (data) => {
     await Api.post('/users/authenticate', data).then(
@@ -37,7 +52,7 @@ const Login : React.FC = () => {
         if (err.response) {
           const { field, error } = err.response.data;
 
-          formRef.current?.setFieldError(field, error);
+          formRef.current?.setFieldError(field, error); // eslint-disable-line
         } else if (err.request) {
           console.log(err.request);
         } else {
@@ -46,44 +61,45 @@ const Login : React.FC = () => {
       },
     );
   };
-  const isMobile = () => window.innerWidth <= 768;
 
   return (
-    <Container>
-      { redirect && <Redirect to="/" /> }
-      { isMobile && <BackGroundLogin />}
-      <MainBlock>
-        <ContainerLogin>
-          <PanelLogin>
-            <Title>Seja Bem-Vindo!</Title>
-            <Form ref={formRef} onSubmit={handleSubimit}>
-              <Input
-                type="text"
-                name="username"
-                placeholder="Username"
-                icon={User}
-              />
-              <Input
-                type="password"
-                name="password"
-                placeholder="Password"
-                icon={Lock}
-              />
-              <Forgot>
-                <Link to="/forgot">Esqueci minha senha</Link>
-              </Forgot>
-              <Button type="submit" text="Login" />
-            </Form>
-            <Signup>
-              <span>Não possui uma conta? </span>
-              <Link to="/signup">Abra já a sua!</Link>
-            </Signup>
-          </PanelLogin>
-        </ContainerLogin>
-        <Footer />
-      </MainBlock>
-      <BackGroundComplement />
-    </Container>
+    <>
+      { redirect && <Redirect to="/app/dashboard" /> }
+      <Container>
+        { !isMobile && <BackGroundLogin />}
+        <MainBlock>
+          <ContainerLogin>
+            <PanelLogin>
+              <Title>Seja Bem-Vindo!</Title>
+              <Form ref={formRef} onSubmit={handleSubimit}>
+                <Input
+                  type="text"
+                  name="username"
+                  placeholder="Username"
+                  icon={User}
+                />
+                <Input
+                  type="password"
+                  name="password"
+                  placeholder="Password"
+                  icon={Lock}
+                />
+                <Forgot>
+                  <Link to="/forgot">Esqueci minha senha</Link>
+                </Forgot>
+                <Button type="submit" text="Login" />
+              </Form>
+              <Signup>
+                <span>Não possui uma conta? </span>
+                <Link to="/signup">Abra já a sua!</Link>
+              </Signup>
+            </PanelLogin>
+          </ContainerLogin>
+          <Footer />
+        </MainBlock>
+        { !isMobile && <BackGroundComplement /> }
+      </Container>
+    </>
   );
 };
 
