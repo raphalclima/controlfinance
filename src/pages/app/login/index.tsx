@@ -5,7 +5,6 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { AplicationState } from '../../../store';
 import * as UserActions from '../../../store/ducks/User/types';
-import Api from '../../../services/api';
 import { Input, Button } from '../../../components/form';
 import Footer from '../../../components/footer';
 import {
@@ -25,46 +24,32 @@ interface FormData {
 
 const Login : React.FC = () => {
   const formRef = useRef<FormHandles>(null);
-  const [redirect, setRedirect] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 1000);
-  const teste = useSelector((state: AplicationState) => state.user.data);
-  console.log('resultado do selector:');
-  console.log(teste);
   const dispatch = useDispatch();
+  const userRepository: UserActions.UserState = (
+    useSelector<AplicationState>((state) => state.user) as UserActions.UserState);
 
   useEffect(() => {
-    console.log('chamadno dispatch');
-    dispatch({ type: UserActions.UserTypes.LOAD_REQUEST, username: 'testeas', password: 'teste' });
     window.addEventListener('resize', () => setIsMobile(window.innerWidth <= 1000));
     return () => window.removeEventListener('resize', () => setIsMobile(window.innerWidth <= 1000));
-  }, [dispatch]);
+  }, []);
 
-  const handleSubimit : SubmitHandler<FormData> = async (data) => {
-    await Api.post('/users/authenticate', data).then(
-      (res) => {
-        const { user, token } = res.data;
-        const newData = { ...user, _token: token };
-        localStorage.setItem('@finance-map/user', JSON.stringify(newData));
+  const handleSubimit : SubmitHandler<FormData> = (data) => {
+    dispatch({
+      type: UserActions.UserTypes.LOAD_REQUEST,
+      routeUrl: '/users/authenticate',
+      routeData: data,
+    });
+  };
 
-        setRedirect(!redirect);
-      },
-      (err) => {
-        if (err.response) {
-          const { field, error } = err.response.data;
-
-          formRef.current?.setFieldError(field, error); // eslint-disable-line
-        } else if (err.request) {
-          console.log(err.request);
-        } else {
-          console.log(`Error :${err}`);
-        }
-      },
-    );
+  const mapError = () => {
+    userRepository.error.map((item) => formRef.current?.setFieldError(item.field, item.error));
   };
 
   return (
     <>
-      { redirect && <Redirect to="/app/dashboard" /> }
+      { userRepository.data.token && <Redirect to="/app" />}
+      { userRepository.error.length !== 0 && mapError()}
       <Container>
         { !isMobile && <BackGroundLogin />}
         <MainBlock>

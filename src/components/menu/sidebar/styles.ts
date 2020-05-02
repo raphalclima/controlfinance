@@ -9,11 +9,11 @@ export const Container = styled.div<Props>`
   z-index: 901;
   display: flex;
   flex-direction: column;
-  top: 50px;
+  top: 0px;
   left: ${(props) => (props?.activeMenu ? '0px' : '-305px')};
   width: 300px;
   background-color: #353535;
-  height: calc(100% - 50px);
+  height: 100%;
   transition-property: left;
   transition-duration: 0.5s;
 `;

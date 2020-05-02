@@ -22,17 +22,19 @@ const Header : React.FC<Props> = (props) => {
   const setHandlerMenu = () => props?.handlerMenu();
 
   return (
-    <Container>
-      <Menu>
-        <Burger handleClick={() => handleClick()} />
-        <SideBar activeMenu={toggleMenu} handleVisible={() => handleClick()} />
-      </Menu>
-      <Icons>
-        <BellNews />
-        <Separator />
-        <Avatar src="https://www.samservicos.com.br/wp-content/uploads/2019/02/user-sam.png" />
-      </Icons>
-    </Container>
+    <>
+      <Container menuActive={toggleMenu}>
+        <Menu>
+          <Burger handleClick={() => handleClick()} />
+        </Menu>
+        <Icons>
+          <BellNews />
+          <Separator />
+          <Avatar src="https://www.samservicos.com.br/wp-content/uploads/2019/02/user-sam.png" />
+        </Icons>
+      </Container>
+      <SideBar activeMenu={toggleMenu} handleVisible={() => handleClick()} />
+    </>
   );
 };
 

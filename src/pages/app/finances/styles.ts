@@ -85,7 +85,7 @@ export const Content = styled.div<Props>`
   display: flex;
   flex-direction: row;
   background-color: ${(props) => (props.menuActive ? '#C6C7CA' : '#F7F8FC')};
-  opacity: ${(props) => (props.menuActive ? '0.3' : '1')};
+  opacity: ${(props) => (props.menuActive ? '0.9' : '1')};
   padding: 30px;
   width: calc(100% - 300px);
 `;

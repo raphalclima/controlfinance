@@ -1,5 +1,9 @@
 import styled from 'styled-components';
 
+interface Props {
+  menuActive: boolean;
+}
+
 export const Avatar = styled.img`
   height: 35px;
   width: 35px;
@@ -9,14 +13,16 @@ export const Avatar = styled.img`
   cursor: pointer;
 `;
 
-export const Container = styled.div`
+export const Container = styled.div<Props>`
   display: flex;
   flex-direction: row;
   height: 50px;
-  background-color: #2c2c2c;
   justify-content: space-between;
   align-items: center;
   padding: 0px 20px 0px;
+
+  background-color: #2c2c2c;
+  opacity: ${(props) => (props.menuActive ? '0.9' : '1')};
 `;
 
 export const Menu = styled.div`

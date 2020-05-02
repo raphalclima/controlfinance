@@ -1,8 +1,10 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 import { SubmitHandler, FormHandles } from '@unform/core';
+import { useSelector, useDispatch } from 'react-redux';
 
-import Api from '../../../services/api';
+import { AplicationState } from '../../../store';
+import * as UserActions from '../../../store/ducks/User/types';
 import {
   Container, MainBlock, Panel, Content, Title, Form,
 } from './styles';
@@ -20,15 +22,12 @@ interface FormData {
   email: string;
 }
 
-interface ErrorApi {
-  field: string;
-  error: string;
-}
-
 const Signup : React.FC = () => {
   const formRef = useRef<FormHandles>(null);
-  const [logged, setLogged] = useState<boolean>(false);
   const [isMobile, setIsMobile] = useState<boolean>(window.innerWidth <= 1000);
+  const dispatch = useDispatch();
+  const userRepository: UserActions.UserState = (
+    useSelector<AplicationState>((state) => state.user) as UserActions.UserState);
 
   useEffect(() => {
     window.addEventListener('resize', () => setIsMobile(window.innerWidth <= 1000));
@@ -36,30 +35,21 @@ const Signup : React.FC = () => {
   }, []);
 
   const handleSubimit : SubmitHandler<FormData> = async (data) => {
-    await Api.post('/users', data).then(
-      (res) => {
-        const { user, token } = res.data;
-        const newData = { ...user, _token: token };
-        localStorage.setItem('@finance-map/user', JSON.stringify(newData));
+    dispatch({
+      type: UserActions.UserTypes.LOAD_REQUEST,
+      routeUrl: '/users',
+      routeData: data,
+    });
+  };
 
-        setLogged(!logged);
-      },
-      (err) => {
-        if (err.response) {
-          const { error } = err.response.data;
-          error.map((item: ErrorApi) => formRef.current?.setFieldError(item.field, item.error));
-        } else if (err.request) {
-          console.log(err.request);
-        } else {
-          console.log(`Error :${err}`);
-        }
-      },
-    );
+  const mapError = () => {
+    userRepository.error.map((item) => formRef.current?.setFieldError(item.field, item.error));
   };
 
   return (
     <>
-      { logged && <Redirect to="/app/dashboard" />}
+      { userRepository.data.token && <Redirect to="/app" />}
+      { userRepository.error.length !== 0 && mapError()}
       <Container>
         { !isMobile && <BackGroundSignup /> }
         <MainBlock>
