@@ -49,12 +49,15 @@ export const OptionList = styled.ul<Props>`
   max-height: ${(props) => (props.activeList ? '200px' : '0px')};
   opacity: ${(props) => (props.activeList ? '1' : '0')};
   transition: max-height 0.3s linear;
-  overflow: hidden;
 
   border-width: 0px 2px 2px 2px;
   border-style: solid;
   border-image: initial;
   border-color: #89229B;
+
+  overflow-x: hidden;
+  overflow-x: auto;
+
 `;
 
 export const OptionItem = styled.li`

@@ -1,5 +1,9 @@
 import styled from 'styled-components';
 
+interface Props {
+  position: boolean;
+}
+
 export const Svg = styled.svg`
   left: 17px;
   top: 17px;
@@ -20,11 +24,11 @@ export const SvgPointer = styled.svg`
   cursor: pointer;
 `;
 
-export const SvgSelectBox = styled.svg`
-  position: absolute;
+export const SvgSelectBox = styled.svg<Props>`
+  position: ${(props) => (props.position ? 'absolute' : 'initial')};
   cursor: pointer;
-  right: 5px;
-  top: 12px;
+  right: ${(props) => (props.position ? '5px' : '0')};
+  top: ${(props) => (props.position ? '12px' : '0')};
 `;
 
 export const SvgClose = styled.svg`

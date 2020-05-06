@@ -32,9 +32,7 @@ export const Title = styled.span`
   display: flex;
   justify-content: center;
   width: 70px;
-  font-family: Muli;
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 15px;
   text-align: center;
   padding-bottom: 2px
 `;

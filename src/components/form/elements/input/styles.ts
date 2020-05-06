@@ -10,7 +10,7 @@ export const Container = styled.div`
 `;
 
 export const Span = styled.span`
-  color: #f00;
+  color: #ec2300;
   font-size: 13px;
 `;
 

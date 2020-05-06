@@ -6,6 +6,7 @@ import { Container, TextBox, Span } from './styles';
 interface Props {
   name: string;
   type: string;
+  value?: string;
   placeholder: string;
   icon(): JSX.Element;
 }
@@ -30,6 +31,7 @@ const Input : React.FC<Props> = (props) => {
       <TextBox
         ref={inputRef}
         type={props?.type}
+        defaultValue={props?.value}
         placeholder={props?.placeholder}
         onFocus={() => setActive(!active)}
         onBlur={() => setActive(!active)}

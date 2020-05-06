@@ -49,9 +49,37 @@ export const NavContent = styled.div`
 export const List = styled.ul`
   display: flex;
   flex-direction: column;
+  max-height: 350px;
+  margin-bottom: 10px;
+  overflow-x: hidden;
+  overflow-x: auto;
+
+  &::-webkit-scrollbar-track
+  {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 10px;
+  }
+  
+  &::-webkit-scrollbar
+  {
+    width: 5px;
+  }
+  
+  &::-webkit-scrollbar-thumb
+  {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+    background-color: #555;
+  }
 `;
 
-export const ItemList = styled.li`
+export const SubList = styled.ul`
+  display: flex;
+  flex-direction: column;
+  margin-left 25px;
+`;
+
+export const Item = styled.li`
   display: flex;
   flex-direction: row;  
   cursor: pointer;  
@@ -63,7 +91,6 @@ export const ItemList = styled.li`
     span {
       color: #8C8C8C;
       opacity: .99;
-      font-family: Muli;
     }
   }
 `;
@@ -71,6 +98,7 @@ export const ItemList = styled.li`
 export const ItemIcons = styled.i`
   display: flex;
   flex-direction: row;
+  margin-right: 15px;
 `;
 
 export const ItemTitle = styled.span`

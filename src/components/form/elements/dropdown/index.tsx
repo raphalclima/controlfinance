@@ -9,13 +9,14 @@ import {
 
 import { Expand, Contract } from '../../../../assets';
 
-interface Tag {
-  id: number;
+interface Item {
+  id: string;
   title: string;
 }
 
 interface Props {
-  listTags: Tag[];
+  value?: string;
+  listItens: Item[];
   name: string;
   icon(): JSX.Element;
 }
@@ -26,7 +27,9 @@ const Select: React.FC<Props> = (props) => {
 
   const [active, setActive] = useState<boolean>(false);
   const [activeList, setActiveList] = useState<boolean>(false);
-  const [itemSelect, setItemSelect] = useState<string>('Tag');
+  const [itemSelect, setItemSelect] = useState<Item>(
+    props?.value ? props?.listItens.find((item) => item.id === props?.value) as Item : { title: 'Tag' } as Item,
+  );
 
   const Icon = props?.icon;
 
@@ -51,7 +54,7 @@ const Select: React.FC<Props> = (props) => {
     registerField({
       name: fieldName,
       ref: selectRef.current,
-      path: 'value',
+      path: 'title',
     });
 
     document.addEventListener('click', clickListener);
@@ -62,8 +65,8 @@ const Select: React.FC<Props> = (props) => {
     };
   }, [clickListener, escapeListener, fieldName, registerField]);
 
-  const selectItem = (item: Tag) => {
-    setItemSelect(item.title);
+  const selectItem = (item: Item) => {
+    setItemSelect(item);
     setActiveList(!activeList);
     setActive(!active);
   };
@@ -79,14 +82,17 @@ const Select: React.FC<Props> = (props) => {
         ref={selectRef}
         onClick={() => handlerClick()}
         active={active}
+        title={itemSelect.id}
       >
-        { !activeList && <Expand handlerClick={() => setActiveList(!activeList)} />}
-        { activeList && <Contract handlerClick={() => setActiveList(!activeList)} />}
-        <Title defaultTitle={itemSelect === 'Tag'}>{ itemSelect }</Title>
+        { !activeList
+        && <Expand position mini={false} handlerClick={() => setActiveList(!activeList)} />}
+        { activeList
+        && <Contract position mini={false} handlerClick={() => setActiveList(!activeList)} />}
+        <Title defaultTitle={itemSelect.title === 'Tag'}>{ itemSelect.title }</Title>
         <Icon />
       </Dropdown>
       <OptionList activeList={activeList}>
-        { props?.listTags.map((item: Tag) => (
+        { props?.listItens.map((item: Item) => (
           <OptionItem
             key={item.id}
             onClick={() => selectItem(item)}

@@ -2,8 +2,13 @@ import React from 'react';
 
 import { SvgPointerWithOpacity } from '../styles';
 
-export default () => (
+interface Props {
+  handlerClick(): void;
+}
+
+const Edit: React.FC<Props> = (props) => (
   <SvgPointerWithOpacity
+    onClick={() => props?.handlerClick()}
     xmlns="http://www.w3.org/2000/svg"
     height="1em"
     width="1em"
@@ -62,5 +67,6 @@ export default () => (
       />
     </g>
   </SvgPointerWithOpacity>
-
 );
+
+export default Edit;

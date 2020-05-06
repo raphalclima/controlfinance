@@ -4,15 +4,18 @@ import { SvgSelectBox } from '../styles';
 
 interface Props {
   handlerClick(): void;
+  position: boolean;
+  mini: boolean;
 }
 
 const Contract: React.FC<Props> = (props) => (
   <SvgSelectBox
+    position={props?.position}
     onClick={() => props?.handlerClick()}
     version="1.0"
     xmlns="http://www.w3.org/2000/svg"
-    height="1.5em"
-    width="1.5em"
+    height={(props?.mini ? '1.0em' : '1.5em')}
+    width={(props?.mini ? '1.0em' : '1.5em')}
     viewBox="0 0 840.000000 378.000000"
     preserveAspectRatio="xMidYMid meet"
     stroke="currentColor"

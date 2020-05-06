@@ -1,17 +1,14 @@
 // components for forms
-import ComponentButton from './elements/button';
-import ComponentButtonAdd from './elements/buttonAdd';
-import ComponentInput from './elements/input';
-import ComponentDropdown from './elements/dropdown';
+import Button from './elements/button';
+import ButtonAdd from './elements/buttonAdd';
+import Input from './elements/input';
+import Dropdown from './elements/dropdown';
+import List from './elements/list';
 
 // forms
-import ComponentTag from './finances/tag';
-import ComponentOrigin from './finances/origin';
+import FormTag from './finances/tag';
+import FormOrigin from './finances/origin';
 
-export const Button = ComponentButton;
-export const ButtonAdd = ComponentButtonAdd;
-export const Input = ComponentInput;
-export const Dropdown = ComponentDropdown;
-
-export const FormTag = ComponentTag;
-export const FormOrigin = ComponentOrigin;
+export {
+  Button, ButtonAdd, Input, Dropdown, List, FormTag, FormOrigin,
+};
