@@ -5,7 +5,8 @@ import {
   EditCircle, TrashCircle, Expand, Contract,
 } from '../../../../assets';
 import {
-  List, SubList, Item, ItemContent, Title, ItemIcons,
+  List, SubList, Item, ItemSubList, ItemContent, Title, ItemIcons, SubItemContent,
+  SubItemTitle, SubItemIcons,
 } from './styles';
 
 interface SubListInterface {
@@ -25,19 +26,26 @@ interface Props {
 
 const ListComponent: React.FC<Props> = (props) => {
   const [ItensActive, setItensActive] = useState<string[]>(['']);
-  const { removeItem, editItem } = useContext(ListContext);
+  const { removeItem, editItem, setFilterCard } = useContext(ListContext);
 
   return (
     <List>
       <Item key={1}>
-        <ItemContent>
+        <ItemContent onClick={() => setFilterCard('')}>
           <Title>Todos os itens</Title>
         </ItemContent>
       </Item>
       {props?.data.map((item: ListInterface) => (
         <React.Fragment key={item.id}>
           <Item key={item.id}>
-            <ItemContent>
+            <ItemContent onClick={() => {
+              setFilterCard(item.id);
+
+              !ItensActive.find((obj) => obj === item.id)
+                ? setItensActive((oldItems) => ([...oldItems, item.id]))
+                : setItensActive(ItensActive.filter((obj) => obj !== item.id));
+            }}
+            >
               { item.subList.length > 0
                 && !ItensActive.includes(item.id)
                 && (
@@ -64,22 +72,39 @@ const ListComponent: React.FC<Props> = (props) => {
               <Title hasSubItem={item.subList.length > 0}>{item.title}</Title>
             </ItemContent>
             <ItemIcons>
-              <EditCircle handlerClick={() => editItem(item.id)} />
-              <TrashCircle handlerClick={() => removeItem(item.id)} />
+              <EditCircle activeList handlerClick={() => editItem(item.id)} />
+              <TrashCircle activeList handlerClick={() => removeItem(item.id)} />
             </ItemIcons>
           </Item>
           { item.subList.map((subItem: SubListInterface) => (
             <React.Fragment key={subItem.id}>
               <SubList activeList={ItensActive.includes(item.id)}>
-                <Item key={subItem.id}>
-                  <ItemContent>
-                    <Title hasSubItem={false}>{subItem.title}</Title>
-                  </ItemContent>
-                  <ItemIcons>
-                    <EditCircle handlerClick={() => editItem(subItem.id)} />
-                    <TrashCircle handlerClick={() => removeItem(subItem.id)} />
-                  </ItemIcons>
-                </Item>
+                <ItemSubList
+                  key={subItem.id}
+                  activeList={ItensActive.includes(item.id)}
+                >
+                  <SubItemContent
+                    onClick={() => setFilterCard(subItem.id)}
+                    activeList={ItensActive.includes(item.id)}
+                  >
+                    <SubItemTitle
+                      hasSubItem={false}
+                      activeList={ItensActive.includes(item.id)}
+                    >
+                      {subItem.title}
+                    </SubItemTitle>
+                  </SubItemContent>
+                  <SubItemIcons activeList={ItensActive.includes(item.id)}>
+                    <EditCircle
+                      activeList={ItensActive.includes(item.id)}
+                      handlerClick={() => editItem(subItem.id)}
+                    />
+                    <TrashCircle
+                      activeList={ItensActive.includes(item.id)}
+                      handlerClick={() => removeItem(subItem.id)}
+                    />
+                  </SubItemIcons>
+                </ItemSubList>
               </SubList>
             </React.Fragment>
           ))}

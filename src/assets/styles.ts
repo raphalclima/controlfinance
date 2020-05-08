@@ -1,7 +1,8 @@
 import styled from 'styled-components';
 
 interface Props {
-  position: boolean;
+  position?: boolean;
+  activeList?: boolean;
 }
 
 export const Svg = styled.svg`
@@ -43,12 +44,20 @@ export const SvgClose = styled.svg`
   }
 `;
 
-export const SvgPointerWithOpacity = styled.svg`
+export const SvgPointerWithOpacity = styled.svg<Props>`
   cursor: pointer;
-  opacity: 0.3;
   margin-left: 5px;
+  max-height: ${(props) => (props.activeList ? '200px' : '0px')};
+  opacity: ${(props) => (props.activeList ? '0.3' : '0')};
+  transition: max-height 0.3s linear;
 
   &:hover {
     opacity: 1;
   }
+`;
+
+export const SvgIcon = styled.svg`
+  position: absolute;
+  margin-left: 5px;
+  margin-top: 5px;
 `;

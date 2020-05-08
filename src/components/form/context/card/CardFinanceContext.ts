@@ -3,9 +3,8 @@ import { createContext } from 'react';
 interface ListEvents {
   editItem(id: string): void;
   removeItem(id: string): void;
-  setFilterCard(id: string): void;
 }
 
-const ListContext = createContext<ListEvents>({} as ListEvents);
+const CardFinanceContext = createContext<ListEvents>({} as ListEvents);
 
-export default ListContext;
+export default CardFinanceContext;

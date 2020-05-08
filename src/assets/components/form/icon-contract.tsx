@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { SvgSelectBox } from '../styles';
+import { SvgSelectBox } from '../../styles';
 
 interface Props {
   handlerClick(): void;

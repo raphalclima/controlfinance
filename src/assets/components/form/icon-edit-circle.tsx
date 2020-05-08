@@ -1,13 +1,15 @@
 import React from 'react';
 
-import { SvgPointerWithOpacity } from '../styles';
+import { SvgPointerWithOpacity } from '../../styles';
 
 interface Props {
   handlerClick(): void;
+  activeList: boolean;
 }
 
 const Edit: React.FC<Props> = (props) => (
   <SvgPointerWithOpacity
+    activeList={props?.activeList}
     onClick={() => props?.handlerClick()}
     xmlns="http://www.w3.org/2000/svg"
     height="1em"

@@ -32,16 +32,6 @@ export const List = styled.ul`
   }
 `;
 
-export const SubList = styled.ul<Props>`
-  display: flex;
-  flex-direction: column;
-  margin-left 25px;
-
-  max-height: ${(props) => (props.activeList ? '200px' : '0px')};
-  opacity: ${(props) => (props.activeList ? '1' : '0')};
-  transition: max-height 0.3s linear;
-`;
-
 export const Item = styled.li`
   display: flex;
   flex-direction: row;  
@@ -76,5 +66,64 @@ export const Title = styled.span<Props>`
   padding: 0 5px;
   opacity: .99;
   line-height: 40px;
+  margin-left: ${(props) => (props.hasSubItem ? '0' : '18px')};
+`;
+
+export const SubList = styled.ul<Props>`
+  display: flex;
+  flex-direction: column;
+  margin-left 25px;
+
+  max-height: ${(props) => (props.activeList ? '200px' : '0px')};
+  opacity: ${(props) => (props.activeList ? '1' : '0')};
+  transition: max-height 0.3s linear;
+`;
+
+export const ItemSubList = styled.li<Props>`
+  display: flex;
+  flex-direction: row;  
+  cursor: pointer;  
+  list-style: none;
+  justify-content: space-between;
+  align-items: center;
+  max-height: ${(props) => (props.activeList ? '200px' : '0px')};
+  opacity: ${(props) => (props.activeList ? '1' : '0')};
+  transition: max-height 0.3s linear;
+
+  &:hover {
+    span {
+      color: #8C8C8C;
+      opacity: .99;
+    }
+  }
+`;
+
+export const SubItemIcons = styled.i<Props>`
+  display: flex;
+  flex-direction: row;
+  margin-right: 15px;
+  max-height: ${(props) => (props.activeList ? '200px' : '0px')};
+  opacity: ${(props) => (props.activeList ? '1' : '0')};
+  transition: max-height 0.3s linear;
+`;
+
+export const SubItemContent = styled.div<Props>`
+  display: flex;
+  flex-directon: row;
+  align-items: center;
+  max-height: ${(props) => (props.activeList ? '200px' : '0px')};
+  opacity: ${(props) => (props.activeList ? '1' : '0')};
+  transition: max-height 0.3s linear;
+`;
+
+export const SubItemTitle = styled.span<Props>`
+  color: #646871;
+  text-decoration: none;
+  padding: 0 5px;
+  opacity: .99;
+  line-height: 40px;
+  max-height: ${(props) => (props.activeList ? '200px' : '0px')};
+  opacity: ${(props) => (props.activeList ? '1' : '0')};
+  transition: max-height 0.3s linear;
   margin-left: ${(props) => (props.hasSubItem ? '0' : '18px')};
 `;

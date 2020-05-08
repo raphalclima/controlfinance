@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { SvgClose } from '../styles';
+import { SvgClose } from '../../styles';
 
 interface Props {
   handlerClick(): void;

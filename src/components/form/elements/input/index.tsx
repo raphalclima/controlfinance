@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useField } from '@unform/core';
 
-import { Container, TextBox, Span } from './styles';
+import { Container, Input, Span } from './styles';
 
 interface Props {
   name: string;
@@ -11,7 +11,7 @@ interface Props {
   icon(): JSX.Element;
 }
 
-const Input : React.FC<Props> = (props) => {
+const InputComponent : React.FC<Props> = (props) => {
   const inputRef = useRef(null);
   const { fieldName, registerField, error } = useField(props?.name);
 
@@ -28,7 +28,7 @@ const Input : React.FC<Props> = (props) => {
 
   return (
     <Container>
-      <TextBox
+      <Input
         ref={inputRef}
         type={props?.type}
         defaultValue={props?.value}
@@ -42,4 +42,4 @@ const Input : React.FC<Props> = (props) => {
     </Container>
   );
 };
-export default Input;
+export default InputComponent;

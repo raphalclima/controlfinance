@@ -6,12 +6,11 @@ interface Props {
 
 export const Container = styled.div`
   display: flex;
-  min-height: calc(100vh - 50px);
+  height: calc(100vh - 50px);
 `;
 
 export const MainBlock = styled.div`
   width: 100%;
-  heigth: 100%;
   display: flex;
   flex-direction: row;
 `;
@@ -114,6 +113,12 @@ export const Content = styled.div<Props>`
   flex-direction: row;
   background-color: ${(props) => (props.menuActive ? '#C6C7CA' : '#F7F8FC')};
   opacity: ${(props) => (props.menuActive ? '0.9' : '1')};
-  padding: 30px;
+  padding: 10px 0 0 0;
+  flex-wrap: wrap;
+  align-content: flex-start;
   width: calc(100% - 300px);
+  max-height: 100%;
+
+  overflow-x: hidden;
+  overflow-x: auto;
 `;

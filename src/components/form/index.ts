@@ -8,7 +8,8 @@ import List from './elements/list';
 // forms
 import FormTag from './finances/tag';
 import FormOrigin from './finances/origin';
+import FormFinance from './finances/finance';
 
 export {
-  Button, ButtonAdd, Input, Dropdown, List, FormTag, FormOrigin,
+  Button, ButtonAdd, Input, Dropdown, List, FormTag, FormOrigin, FormFinance,
 };

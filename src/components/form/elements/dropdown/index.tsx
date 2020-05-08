@@ -15,22 +15,25 @@ interface Item {
 }
 
 interface Props {
+  placeholder: string;
   value?: string;
   listItens: Item[];
   name: string;
   icon(): JSX.Element;
+  handlerChange?(obj: string): void;
 }
 
 const Select: React.FC<Props> = (props) => {
   const selectRef = useRef(null);
   const { fieldName, registerField, error } = useField(props?.name);
-
   const [active, setActive] = useState<boolean>(false);
   const [activeList, setActiveList] = useState<boolean>(false);
   const [itemSelect, setItemSelect] = useState<Item>(
-    props?.value ? props?.listItens.find((item) => item.id === props?.value) as Item : { title: 'Tag' } as Item,
+    props?.value ? props?.listItens.find((item) => item.id === props?.value) as Item : {
+      id: '1',
+      title: props?.placeholder,
+    } as Item,
   );
-
   const Icon = props?.icon;
 
   const escapeListener = useCallback((e: KeyboardEvent) => {
@@ -54,7 +57,7 @@ const Select: React.FC<Props> = (props) => {
     registerField({
       name: fieldName,
       ref: selectRef.current,
-      path: 'title',
+      path: 'id',
     });
 
     document.addEventListener('click', clickListener);
@@ -69,6 +72,7 @@ const Select: React.FC<Props> = (props) => {
     setItemSelect(item);
     setActiveList(!activeList);
     setActive(!active);
+    if (props?.handlerChange !== undefined) { props?.handlerChange!(item.title); }
   };
 
   const handlerClick = () => {
@@ -82,24 +86,31 @@ const Select: React.FC<Props> = (props) => {
         ref={selectRef}
         onClick={() => handlerClick()}
         active={active}
-        title={itemSelect.id}
+        id={itemSelect.id}
       >
         { !activeList
         && <Expand position mini={false} handlerClick={() => setActiveList(!activeList)} />}
         { activeList
         && <Contract position mini={false} handlerClick={() => setActiveList(!activeList)} />}
-        <Title defaultTitle={itemSelect.title === 'Tag'}>{ itemSelect.title }</Title>
+        <Title
+          className={props?.placeholder}
+          defaultTitle={itemSelect.title === props?.placeholder}
+          title={itemSelect.title}
+        >
+          { itemSelect.title }
+        </Title>
         <Icon />
       </Dropdown>
       <OptionList activeList={activeList}>
-        { props?.listItens.map((item: Item) => (
-          <OptionItem
-            key={item.id}
-            onClick={() => selectItem(item)}
-          >
-            <TitleItem>{ item.title }</TitleItem>
-          </OptionItem>
-        )) }
+        { props?.listItens.length > 0
+         && props?.listItens[0].id && props?.listItens.map((item: Item) => (
+           <OptionItem
+             key={item.id}
+             onClick={() => selectItem(item)}
+           >
+             <TitleItem>{ item.title }</TitleItem>
+           </OptionItem>
+         )) }
       </OptionList>
       {error && <Span>{error}</Span> }
     </Container>

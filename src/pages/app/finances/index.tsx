@@ -2,13 +2,18 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Redirect } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-import { AplicationState } from '../../../store';
-import { UserState } from '../../../store/ducks/User/types';
-import { TagContext, OriginContext, ListContext } from '../../../components/form/context';
 import Api from '../../../services/api';
 import Header from '../../../components/header';
+import { AplicationState } from '../../../store';
+import { UserState } from '../../../store/ducks/User/types';
 import {
-  ButtonAdd as Button, List, FormTag, FormOrigin,
+  ListContext, TagContext, OriginContext, FinanceContext, CardFinanceContext,
+} from '../../../components/form/context';
+
+import { CardFinance, CardFinanceAdd } from '../../../components/card';
+
+import {
+  ButtonAdd as Button, List, FormTag, FormOrigin, FormFinance,
 } from '../../../components/form';
 import {
   Container, MainBlock, Nav, Title, NavContent, Content,
@@ -27,19 +32,41 @@ interface Tag {
   subList: Origin[];
 }
 
+enum Type {
+  Provento,
+  Desconto
+}
+
+interface Finance {
+  id: string;
+  date: Date;
+  type: number;
+  value: number;
+  tag: string;
+  origin: string;
+}
+
 const Finances: React.FC = () => {
   const [menuActive, setMenuActive] = useState<boolean>(false);
   const [formTag, setFormTag] = useState<boolean>(false);
   const [formOrigin, setFormOrigin] = useState<boolean>(false);
+  const [formFinance, setFormFinance] = useState<boolean>(false);
   const [listTag, setListTag] = useState<Tag[]>([]);
+  const [listFinance, setListFinance] = useState<Finance[]>([]);
   const [editTag, setEditTag] = useState<Tag>({} as Tag);
   const [editOrigin, setEditOrigin] = useState<Origin>({} as Origin);
+  const [editFinance, setEditFinance] = useState<Finance>({} as Finance);
+  const [filterCard, setFilterCard] = useState<string>('');
+
+  const cards = filterCard
+    ? listFinance.filter((item) => item.tag === filterCard || item.origin === filterCard)
+    : listFinance;
 
   const userRepository: UserState = (
     useSelector<AplicationState>((state) => state.user) as UserState);
 
   useEffect(() => {
-    async function getTags() {
+    async function loadPage() {
       const config = {
         headers: { Authorization: 'Bearer '.concat(userRepository.data.token) },
       };
@@ -54,9 +81,20 @@ const Finances: React.FC = () => {
           console.log(`Error :${err}`);
         }
       });
+
+      await Api.get('/finances/'.concat(userRepository.data.id), config).then((res) => {
+        setListFinance(res.data);
+      },
+      (err) => {
+        if (err.request) {
+          console.log(`Error request: ${err.request}`);
+        } else {
+          console.log(`Error :${err}`);
+        }
+      });
     }
 
-    getTags();
+    loadPage();
   }, [userRepository.data.id, userRepository.data.token]);
 
   listTag.sort((a, b) => {
@@ -77,6 +115,8 @@ const Finances: React.FC = () => {
     }
   });
 
+  // Register, Update, Edit Item of Tags and Origins
+
   const registerItem = useCallback((item: Tag) => {
     setListTag((oldListTag) => ([...oldListTag, item]));
   }, []);
@@ -93,6 +133,7 @@ const Finances: React.FC = () => {
     const origin = listTag.find((item) => (
       item.subList.find((subItem) => subItem.id === id)
     ))?.subList.find((obj) => obj.id === id);
+    const finance = listFinance.find((item) => item.id === id);
 
     async function remove() {
       const config = {
@@ -133,30 +174,67 @@ const Finances: React.FC = () => {
             console.log(`Error :${err}`);
           }
         });
+      } else if (finance) {
+        await Api.delete('/finances/'.concat(id), config).then((res) => {
+          const newListFinance = listFinance.filter((item) => item.id !== id);
+          setListFinance(newListFinance);
+        },
+        (err) => {
+          if (err.request) {
+            console.log(`Error request: ${err.request}`);
+          } if (err.response) {
+            console.log(`Error response: ${err.response.data}`);
+          } else {
+            console.log(`Error :${err}`);
+          }
+        });
       }
     }
 
     remove();
-  }, [listTag, userRepository.data.token]);
+  }, [listFinance, listTag, userRepository.data.token]);
 
   const editItem = useCallback((id: string) => {
     const tag = listTag.find((item) => item.id === id);
-    const origin = listTag.find((item) => (
-      item.subList.find((subItem) => subItem.id === id)
-    ))?.subList.find((obj) => obj.id === id);
 
     if (tag) {
       setEditTag(tag);
       setFormTag(!formTag);
-    } else if (origin) {
-      const idTag = listTag.find((item) => (
+    } else {
+      const origin = listTag.find((item) => (
         item.subList.find((subItem) => subItem.id === id)
-      ))?.id;
+      ))?.subList.find((obj) => obj.id === id);
 
-      setEditOrigin({ ...origin, tag: idTag });
-      setFormOrigin(!formOrigin);
+      if (origin) {
+        const idTag = listTag.find((item) => (
+          item.subList.find((subItem) => subItem.id === id)
+        ))?.id;
+
+        setEditOrigin({ ...origin, tag: idTag });
+        setFormOrigin(!formOrigin);
+      } else {
+        const finance = listFinance.find((item) => item.id === id);
+
+        if (finance) {
+          setEditFinance(finance);
+          setFormFinance(!formFinance);
+        }
+      }
     }
-  }, [formOrigin, formTag, listTag]);
+  }, [formFinance, formOrigin, formTag, listFinance, listTag]);
+
+  // Register, Update, Edit Item of Finances
+
+  const registerFinance = useCallback((item: Finance) => {
+    setListFinance((oldListFinance) => ([...oldListFinance, item]));
+  }, []);
+
+  const updateListFinance = useCallback((newFinance: Finance) => {
+    const finances: Finance[] = listFinance.filter((item) => item.id !== newFinance.id);
+    const newListFinance = [...finances, newFinance];
+
+    setListFinance(newListFinance);
+  }, [listFinance]);
 
   const CreateNewTag = () => (
     <TagContext.Provider value={{ registerItem, updateListTag }}>
@@ -183,18 +261,32 @@ const Finances: React.FC = () => {
     </OriginContext.Provider>
   );
 
+  const CreateNewFinance = () => (
+    <FinanceContext.Provider value={{ registerFinance, updateListFinance }}>
+      <FormFinance
+        dataListTags={listTag}
+        dataEdit={editFinance}
+        handlerClose={() => {
+          setFormFinance(!formFinance);
+          setEditFinance({} as Finance);
+        }}
+      />
+    </FinanceContext.Provider>
+  );
+
   return (
     <>
       { !userRepository.data.token && <Redirect to="/login" />}
       { formTag && <CreateNewTag /> }
       { formOrigin && <CreateNewOrigin /> }
+      { formFinance && <CreateNewFinance />}
       <Header handlerMenu={() => setMenuActive(!menuActive)} />
       <Container>
         <MainBlock>
           <Nav>
             <Title>Categorias</Title>
             <NavContent>
-              <ListContext.Provider value={{ editItem, removeItem }}>
+              <ListContext.Provider value={{ editItem, removeItem, setFilterCard }}>
                 <List data={listTag} />
               </ListContext.Provider>
               <Button type="button" text="Tag" handleClick={() => setFormTag(!formTag)} />
@@ -202,7 +294,24 @@ const Finances: React.FC = () => {
             </NavContent>
           </Nav>
           <Content menuActive={menuActive}>
-            <span>Conteudo Finanças</span>
+            { cards.map((item) => (
+              <CardFinanceContext.Provider value={{ editItem, removeItem }}>
+                <CardFinance
+                  id={item.id}
+                  qtdCard={4}
+                  type={item.type === 1 ? Type.Provento : Type.Desconto}
+                  value={item.value}
+                  tag={listTag.find((tag) => tag.id === item.tag)?.title as string}
+                  origin={listTag.find(
+                    (tag) => tag.id === item.tag,
+                  )?.subList.find((origin) => origin.id === item.origin)?.title as string}
+                />
+              </CardFinanceContext.Provider>
+            )) }
+            <CardFinanceAdd
+              handleClick={() => setFormFinance(!formFinance)}
+              qtdCard={4}
+            />
           </Content>
         </MainBlock>
       </Container>

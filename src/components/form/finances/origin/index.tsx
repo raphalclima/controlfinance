@@ -146,6 +146,7 @@ const Origin: React.FC<Props> = (props) => {
                 />
                 <Dropdown
                   name="tag"
+                  placeholder="Tag"
                   value={props?.dataEdit.tag}
                   listItens={props?.dataListTags as DropdownInterface[]}
                   icon={TagIcon}
